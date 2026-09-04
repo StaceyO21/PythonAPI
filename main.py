@@ -13,3 +13,5 @@ self.send_header("Content-type", "application/json")
             "message": 'Hello from my API!'
         }
 
+self.wfile.write(bytes(json.dumps(response).encode()))
+
