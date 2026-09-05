@@ -1,17 +1,54 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import json
-class
-MyAPI(BaseHTTPRequestHandler):
+
+class MyAPI(BaseHTTPRequestHandler):
 
     def do_GET(self):
-        self.send_response(200)
 
-self.send_header("Content-type", "application/json")
+        self.send_header("Content-type", "application/json")
         self.end_headers()
 
-        response = {
+        if self.path == '/':
+            self.send_response(200)
+
+            response = {
             "message": 'Hello from my API!'
         }
 
-self.wfile.write(bytes(json.dumps(response).encode()))
+        elif self.path == '/products':
+            self.send_response(200)
 
+            response = {
+            "products": ["Laptop", "Mouse", "Keyboard"]
+        }
+
+        else:
+            self.send_response(404)
+
+            response = {
+                "error": "Not found"
+            }
+
+    def do_POST(self):
+
+        if self.path == '/chat':
+            content_length = int(self.headers['Content-Length'])
+            body = self.rfile.read(content_length)
+            data = json.loads(body)
+
+            response = {
+                "you_sent": data
+            }
+
+            self.send_response(200)
+            self.send_header("Content-type", "application/json")
+            self.end_headers()
+
+
+        self.wfile.write(json.dumps(response).encode())
+
+server = HTTPServer(('localhost', 8080), MyAPI)
+
+print("API Server running on http://localhost:8080")
+
+server.serve_forever()
