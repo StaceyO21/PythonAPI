@@ -35,7 +35,21 @@ class MyAPI(BaseHTTPRequestHandler):
         if self.path == '/chat':
             content_length = int(self.headers['Content-Length'])
             body = self.rfile.read(content_length)
-            data = json.loads(body)
+
+            try:
+                data = json.loads(body)
+
+            except json.JSONDecodeError:
+                self.send_response(400)
+                self.send_header("Content-type", "application/json")
+                self.end_headers()
+
+                response = {
+                    'error': 'Invalid JSON'
+                 }
+
+                self.wfile.write(json.dumps(response).encode())
+                return
 
             if 'message' not in data:
                 self.send_response(400)
@@ -53,7 +67,6 @@ class MyAPI(BaseHTTPRequestHandler):
                     "reply": f"You said: {message}"
                 }
 
-            self.send_response(200)
             self.send_header("Content-type", "application/json")
             self.end_headers()
 
