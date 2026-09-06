@@ -4,6 +4,27 @@ from google import genai
 import json
 
 client = genai.Client()
+
+products = [
+    {
+        "id": 1,
+        "name": "Laptop",
+        "price": 899.99,
+        "quantity": 12
+    },
+    {
+        "id": 2,
+        "name": "Mouse",
+        "price": 24.99,
+        "quantity": 37
+    },
+    {
+        "id": 3,
+        "name": "Keyboard",
+        "price": 49.99,
+        "quantity": 21
+    }
+]
 class MyAPI(BaseHTTPRequestHandler):
 
     def do_GET(self):
@@ -16,7 +37,9 @@ class MyAPI(BaseHTTPRequestHandler):
         elif self.path == "/products":
             self.send_response(200)
 
-            response = {"products": ["Laptop", "Mouse", "Keyboard"]}
+            response = {
+                'products': products
+            }
 
         else:
             self.send_response(404)
