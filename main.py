@@ -1,8 +1,9 @@
 from email import message
 from http.server import BaseHTTPRequestHandler, HTTPServer
+from google import genai
 import json
 
-
+client = genai.Client()
 class MyAPI(BaseHTTPRequestHandler):
 
     def do_GET(self):
@@ -54,9 +55,13 @@ class MyAPI(BaseHTTPRequestHandler):
             else:
                 message = data["message"]
 
+                ai_response = client.models.generate_content(model="gemini-3.6-flash", contents=message)
+
                 self.send_response(200)
 
-                response = {"reply": f"You said: {message}"}
+                response = {
+                    "reply": ai_response.text
+                }
 
             self.send_header("Content-type", "application/json")
             self.end_headers()
