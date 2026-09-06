@@ -2,38 +2,35 @@ from email import message
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import json
 
+
 class MyAPI(BaseHTTPRequestHandler):
 
     def do_GET(self):
 
-        self.send_header("Content-type", "application/json")
-        self.end_headers()
-
-        if self.path == '/':
+        if self.path == "/":
             self.send_response(200)
 
-            response = {
-            "message": 'Hello from my API!'
-        }
+            response = {"message": "Hello from my API!"}
 
-        elif self.path == '/products':
+        elif self.path == "/products":
             self.send_response(200)
 
-            response = {
-            "products": ["Laptop", "Mouse", "Keyboard"]
-        }
+            response = {"products": ["Laptop", "Mouse", "Keyboard"]}
 
         else:
             self.send_response(404)
 
-            response = {
-                "error": "Not found"
-            }
+            response = {"error": "Not found"}
+
+        self.send_header("Content-type", "application/json")
+        self.end_headers()
+
+        self.wfile.write(json.dumps(response).encode())
 
     def do_POST(self):
 
-        if self.path == '/chat':
-            content_length = int(self.headers['Content-Length'])
+        if self.path == "/chat":
+            content_length = int(self.headers["Content-Length"])
             body = self.rfile.read(content_length)
 
             try:
@@ -44,36 +41,30 @@ class MyAPI(BaseHTTPRequestHandler):
                 self.send_header("Content-type", "application/json")
                 self.end_headers()
 
-                response = {
-                    'error': 'Invalid JSON'
-                 }
+                response = {"error": "Invalid JSON"}
 
                 self.wfile.write(json.dumps(response).encode())
                 return
 
-            if 'message' not in data:
+            if "message" not in data:
                 self.send_response(400)
 
-                response = {
-                    "error": "Message is required"
-                }
+                response = {"error": "Message is required"}
 
             else:
-                message = data['message']
+                message = data["message"]
 
                 self.send_response(200)
 
-                response = {
-                    "reply": f"You said: {message}"
-                }
+                response = {"reply": f"You said: {message}"}
 
             self.send_header("Content-type", "application/json")
             self.end_headers()
 
-
             self.wfile.write(json.dumps(response).encode())
 
-server = HTTPServer(('localhost', 8080), MyAPI)
+
+server = HTTPServer(("localhost", 8080), MyAPI)
 
 print("API Server running on http://localhost:8080")
 
