@@ -2,5 +2,5 @@ POST http://localhost:8080/chat
 Content-Type: application/json
 
 {
-  Hello
+  "message": "Explain what an API is in one sentence."
 }
